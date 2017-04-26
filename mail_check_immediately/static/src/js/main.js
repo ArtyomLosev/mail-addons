@@ -1,21 +1,28 @@
-openerp.mail_check_immediately = function(instance, local) {
+odoo.define('mail_check_immediately', function(require) {
+    'use strict';
 
-    instance.mail.Wall.include({
+    var Model = require('web.Model');
+    var core = require('web.core');
+    var Widget = require('web.Widget');
+    var Chatter = require('mail.Chatter');
+    var data = require('web.data');
+    
+    var QWeb = core.qweb;
+    var _t = core._t;
 
-        init: function(){
+    var ChatAction = core.action_registry.get('mail.chat.instant_messaging');
+
+
+    ChatAction.include({
+        init: function(parent, action, options){
             this._super.apply(this, arguments);
-
             var _this = this;
-
-            this.imm_model = new instance.web.Model('fetch_mail.imm');
-            this.events['click a.oe_fetch_new_mails'] = function(){
-                _this.run_fetchmail_manually();
-            };
+            this.imm_model = new Model('fetch_mail.imm');
+            this.events['click a.oe_fetch_new_mails'] = 'run_fetchmail_manually';
         },
 
         start: function() {
             var _this = this;
-
 
             this._super();
 
@@ -29,15 +36,14 @@ openerp.mail_check_immediately = function(instance, local) {
 
         run_fetchmail_manually: function(){
             var _this = this;
-
-            this.imm_model.call('run_fetchmail_manually', {context: new instance.web.CompoundContext()}).then(function(){
+            this.imm_model.call('run_fetchmail_manually', {context: new data.CompoundContext()}).then(function(){
                 _this.get_last_fetched_time();
             });
         },
 
         get_last_fetched_time: function(){
             var _this = this;
-            this.imm_model.call('get_last_update_time', {context: new instance.web.CompoundContext()}).then(function(res){
+            this.imm_model.call('get_last_update_time', {context: new data.CompoundContext()}).then(function(res){
                 var value;
                 if (res)
                     value = $.timeago(res);
@@ -52,4 +58,6 @@ openerp.mail_check_immediately = function(instance, local) {
         }
 
     });
-};
+
+
+});

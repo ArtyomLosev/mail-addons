@@ -15,8 +15,8 @@
             <td></td>
         </tr>
     </t>
-    <t t-extend="mail.wall">
-        <t t-jquery="tr.oe_header_row_top" t-operation="after">
+    <t t-extend="mail.client_action">
+        <t t-jquery="div.o_mail_chat_content" t-operation="after">
             <t t-call="fetch_mail_immediately.header">
                 <t t-set="colspan" t-value="2"/>
             </t>

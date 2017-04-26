@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from openerp.tools.translate import _
-from openerp import tools
+from odoo.tools.translate import _
+from odoo import tools
 
-from openerp import exceptions
-from openerp import models, fields, api
+from odoo import exceptions
+from odoo import models, fields, api
 
 
 class FetchMailServer(models.Model):
@@ -25,12 +25,10 @@ class FetchMailServer(models.Model):
         dst_format = tools.misc.DEFAULT_SERVER_DATETIME_FORMAT
         dst_tz_name = self._context.get('tz') or self.env.user.tz
         _now = tools.misc.server_to_local_timestamp(src_tstamp_str, src_format, dst_format, dst_tz_name)
-
         return _now
 
     @api.model
     def _fetch_mails(self):
-
         if self._context.get('run_fetchmail_manually'):
             # if interval less than 5 seconds
             if self._last_updated and (datetime.datetime.now() - self._last_updated) < datetime.timedelta(0, 5):
@@ -61,6 +59,7 @@ class FetchMailImmediately(models.AbstractModel):
 
         fetchmail_task = self.env.ref('fetchmail.ir_cron_mail_gateway_action')
         fetchmail_model = self.env['fetchmail.server'].sudo()
+
 
         fetchmail_task._try_lock()
         fetchmail_model.with_context(run_fetchmail_manually=True)._fetch_mails()
